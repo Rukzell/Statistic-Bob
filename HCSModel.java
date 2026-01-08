@@ -7,14 +7,16 @@ import java.util.List;
 /**
  * @author Rukzell
  * Statistic Bob is a handcrafted statistical model for aim analysis (HCSModel)
+ * 
+ * Last changes:
+ * - removed entropy. Has false positives
  */
 public class HCSModel {
     public static String modelName = "Statistic Bob";
-    public static String modelVer = "1.1";
+    public static String modelVer = "1.2";
 
     public static double proba(List<Double> data) {
         double jb = MathUtil.jarqueBera(data);
-        double entropy = MathUtil.entropy(data);
         double runs = MathUtil.runsTest(data);
         double z = MathUtil.madZ(data);
         double cusum = MathUtil.cusum(data);
@@ -33,15 +35,6 @@ public class HCSModel {
             jbSignal = 1.0;
         } else {
             jbSignal = (20.0 - jb) / 15.0;
-        }
-
-        double entropySignal;
-        if (entropy >= 0.3) {
-            entropySignal = 0.0;
-        } else if (entropy <= 0.2) {
-            entropySignal = 1.0;
-        } else {
-            entropySignal = (0.5 - entropy) / 0.3;
         }
 
         double zSignal;
@@ -91,7 +84,6 @@ public class HCSModel {
 
         double score =
                 1.0 * jbSignal +
-                        0.9 * entropySignal +
                         0.7 * zSignal +
                         1.1 * cusumSignal +
                         0.3 * runsSignal +
