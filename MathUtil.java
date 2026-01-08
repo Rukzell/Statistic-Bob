@@ -79,30 +79,6 @@ public class MathUtil {
         return (runs - expectedRuns) / Math.sqrt(varianceRuns);
     }
 
-    public static double entropy(List<Double> data) {
-        int bins = 10;
-        double min = Collections.min(data);
-        double max = Collections.max(data);
-        double width = (max - min) / bins;
-
-        if (width == 0) return 0;
-
-        int[] hist = new int[bins];
-        for (double v : data) {
-            int b = Math.min(bins - 1, (int) ((v - min) / width));
-            hist[b]++;
-        }
-
-        double h = 0;
-        for (int c : hist) {
-            if (c == 0) continue;
-            double p = c / (double) data.size();
-            h -= p * Math.log(p);
-        }
-
-        return h / Math.log(bins);
-    }
-
     public static double runsTest(List<Double> data) {
         double median = data.stream().sorted().skip(data.size()/2).findFirst().orElse((double) 0);
 
