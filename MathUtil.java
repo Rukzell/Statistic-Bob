@@ -140,4 +140,37 @@ public class MathUtil {
 
         return top / (sum + 1e-6);
     }
+    
+    public static double spectralFlatness(List<Double> data) {
+        int n = data.size();
+        if (n < 8) return 1.0;
+
+        double[] power = new double[n];
+
+        for (int k = 0; k < n; k++) {
+            double real = 0.0;
+            double imag = 0.0;
+            for (int t = 0; t < n; t++) {
+                double angle = 2.0 * Math.PI * k * t / n;
+                real += data.get(t) * Math.cos(angle);
+                imag -= data.get(t) * Math.sin(angle);
+            }
+            power[k] = real * real + imag * imag + 1e-12;
+        }
+
+        double geoMean = 0.0;
+        double arithMean = 0.0;
+
+        for (double p : power) {
+            geoMean += Math.log(p);
+            arithMean += p;
+        }
+
+        geoMean = Math.exp(geoMean / n);
+        arithMean /= n;
+
+        if (arithMean == 0.0) return 1.0;
+
+        return geoMean / arithMean;
+    }
 }
